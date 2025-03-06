@@ -1,78 +1,105 @@
+# Music Search Platform - Demo Version
 
-
-# 🎵 Music Search Platform 
-
-The code in this repository is a demo of what the front and back end would look like with third party services (Streamlit, Render, PineconeDB)
-
-This project was built as part of a company project to make a **smart music search tool**. The goal was to let users type in a natural language search like "upbeat pop songs from 2023" and get **relevant songs** — even if the song titles didn’t exactly match the words they typed.
+This repository contains a **demo version** of a music search platform.  
+The original version was built as part of a **company project** and used **different technology and infrastructure**.  
+Due to company rules, the actual codebase (frontend, backend, and pipelines) is **private** — this repo only includes a simplified example to show the **preprocessing and basic search logic**.
 
 ---
 
-## ⚙️ Tech Stack
+## What the Original System Did
+The original project was made to **help users search for songs using natural language**.  
+Example:  
+> "Find upbeat pop songs from 2023"
 
-| Part               | What we used |
-|-------------------|----------------|
-| Frontend         | Angular |
-| Backend - Main API | Node.js |
-| Backend - Data Processing | Flask |
-| Vector Database  | Azure CosmosDB (with vector search enabled) |
-| Embedding Model | Azure OpenAI (text-embedding-ada-002) |
+The system would find songs that matched the **feeling** of the query — even if the song name or artist didn’t contain those exact words.
 
 ---
 
-## 📥 Data Pipeline - How We Prepped the Data
+##  Tech Stack (Original vs Demo)
 
-### Where the Data Came From
-The data we used was **Spotify song data**, which had things like:
-- Song name and artist
+| Layer               | Original Tech (Company)     | Demo Tech (Here)   |
+|----------------|------------------|------------------|
+| Frontend         | Angular          | Streamlit |
+| Backend - Main API | Node.js           | FastAPI |
+| Backend - Processing | Flask               | FastAPI (combined) |
+| Vector Database  | Azure CosmosDB | Pinecone |
+| Embedding Model | Azure OpenAI   | Azure OpenAI |
+
+---
+
+## Data Used
+Both versions (original and demo) used **Spotify song data**, including:
+- Track name and artist(s)
 - Release date
-- Danceability, energy, tempo, and other audio features
-
-This was originally provided in a **CSV file**.
+- Audio features (danceability, energy, tempo, etc.)
 
 ---
 
-### What the Preprocessing Did
-We used a **Jupyter Notebook (`cosmos.ipynb`)** to:
-
-1. Read the CSV file and clean up the data.
-2. Combine all useful info about each song into a **text summary** (like “This is a happy dance song by Drake from 2022”).
-3. Convert those summaries into **vectors (embeddings)** using **Azure OpenAI’s embedding model**.
-4. Store the vectors along with song metadata in **CosmosDB**, which supports **vector search**.
-
----
-
-### Storage
-All the preprocessed song data — including the embeddings and song details — was saved to **Azure CosmosDB**. CosmosDB was set up to do **vector similarity search** so it could find songs that were closest in meaning to the search query.
+## What This Demo Code Does
+This demo includes a **data processing script** (`preprocess.py`) that:
+1. Reads a Spotify songs **CSV file**.
+2. Combines useful data into short **descriptions** for each song.
+3. Converts those descriptions into **embeddings** using Azure OpenAI’s embedding model.
+4. Uploads those embeddings into **Pinecone**, a vector search database.
 
 ---
 
-## 🌐 How the Whole System Worked
-- The **frontend (Angular)** gave users a search bar where they could type something like "relaxing indie songs from 2019."
-- The **main backend (Node.js)** received the search and forwarded it to a smaller **Flask service**.
-- The Flask service took the query, cleaned it up, and turned it into a vector using the same OpenAI embedding model.
-- That vector was passed to **CosmosDB**, which ran the actual vector search.
-- CosmosDB returned the closest matching songs, and the backend sent them back to the frontend to display.
+## Search Flow (in the Original and Demo Versions)
+| Step | What Happens |
+|----|----|
+| 1 | User types a search like "chill indie songs from 2020" |
+| 2 | Query is cleaned and embedded using Azure OpenAI |
+| 3 | Embedding is compared to all song vectors in Pinecone |
+| 4 | Closest matches (most similar songs) are returned |
+| 5 | Frontend displays the matching songs |
 
 ---
 
-## 📊 About the Notebook (`cosmos.ipynb`)
-Because this was part of a **company project**, I can’t share the actual **Angular frontend, Node backend, or Flask code**.
-
-However, the **notebook (`cosmos.ipynb`)** is included to show:
-
-- How the data got cleaned up.
-- How the embeddings were generated using Azure OpenAI.
-- How the song data (vectors + metadata) got uploaded into CosmosDB.
-
-At the bottom of the notebook, there’s also an **example query** showing CosmosDB returning songs based on a sample search. This helps demonstrate that the system works — you can see how the search vector pulls back relevant songs based on meaning, not just exact words.
+## Why Vector Search?
+Traditional search only finds **exact word matches**.  
+Vector search finds **songs with similar meaning**.  
+For example, searching for "summer road trip songs" might return:
+- "Highway Vibes" (even though "summer" isn’t in the title)
+- "Beach Drive" (because it understands the **feeling**, not just the words)
 
 ---
 
-## 🚀 Why Use Vector Search?
-Normal search (like `track_name LIKE '%love%'`) only works if the exact words match. By using vectors, the system could find songs that **feel similar** to the search query — even if none of the exact words were in the song name. For example, a search for "chill beach music" could still find a song called "Ocean Vibes" — even though "chill" and "beach" aren’t in the title.
+## Files Included
+| File                  | What It Does |
+|----------------|------------------|
+| `preprocess.py`    | Prepares and uploads data to Pinecone |
+| `search_service.py` | Runs a basic search API |
+| `.env.example`      | Template for your API keys |
+| `app.py`              | Simple Streamlit frontend for testing search |
 
 ---
 
-## 🔒 Important Note
-This project was made for a company, so only the preprocessing notebook is included here. Everything else (the actual app code) is kept private.
+##  How to Run (Demo Version)
+1. Place your Spotify dataset CSV into `data/spotify_songs.csv`
+2. Add your `PINECONE_API_KEY` and `OPENAI_API_KEY` to `.env`
+3. Preprocess the data:
+    ```bash
+    python preprocess.py
+    ```
+4. Start the search backend:
+    ```bash
+    uvicorn search_service:app --reload
+    ```
+5. Start the frontend:
+    ```bash
+    streamlit run app.py
+    ```
+
+---
+
+##  Note
+This demo version is simplified for open sharing.  
+The **real system** at the company used:
+- Azure CosmosDB for vector search
+- Azure Bot Framework for chatbot logic
+- Azure Cognitive Search for advanced filters
+- Node.js and Flask for more scalable backend pipelines
+
+That code is **private** and cannot be included here.
+
+

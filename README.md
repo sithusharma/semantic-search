@@ -73,8 +73,5 @@ Traditional keyword search (like `track_name LIKE '%love%'`) is **limited** to e
 ---
 
 ## 🔒 Company Disclaimer
-This project was part of proprietary development for a corporate client, and only the **preprocessing notebook** is visible in this repository. The **full project (frontend, API gateway, and Flask processing backend)** remains private due to **intellectual property restrictions**.
+This project was part of proprietary development for a corporate client, and only the **preprocessing notebook** is visible in this repository. The **full project (frontend, API gateway, and Flask processing backend)** remains private due to **property restrictions**.
 
----
-
-## 📂 Repository Structure

@@ -1,77 +1,74 @@
-# 🎵 Intelligent Music Search Platform
+# 🎵 Music Search Platform
 
-This project was developed as part of a company initiative to create an **intelligent music retrieval platform** capable of understanding **natural language queries** and returning the most relevant songs. The system leverages a **combination of frontend, backend, vector search, and AI-powered embeddings** to enable **semantic music search** across a large catalog of songs.
+This project was built as part of a company project to make a **smart music search tool**. The goal was to let users type in a natural language search like "upbeat pop songs from 2023" and get **relevant songs** — even if the song titles didn’t exactly match the words they typed.
 
 ---
 
 ## ⚙️ Tech Stack
 
-| Layer               | Technology |
+| Part               | What we used |
 |-------------------|----------------|
 | Frontend         | Angular |
-| Backend - API Gateway | Node.js |
+| Backend - Main API | Node.js |
 | Backend - Data Processing | Flask |
-| Vector Database  | Azure CosmosDB (Vector Search) |
+| Vector Database  | Azure CosmosDB (with vector search enabled) |
 | Embedding Model | Azure OpenAI (text-embedding-ada-002) |
 
 ---
 
-## 📥 Data Pipeline - Preprocessing & Storage
+## 📥 Data Pipeline - How We Prepped the Data
 
-### Data Source
-The dataset used for this project consisted of **Spotify song metadata**, including attributes like track name, artists, release date, and audio features such as danceability, energy, and tempo. This data was initially provided as a **CSV file**.
+### Where the Data Came From
+The data we used was **Spotify song data**, which had things like:
+- Song name and artist
+- Release date
+- Danceability, energy, tempo, and other audio features
+
+This was originally provided in a **CSV file**.
 
 ---
 
-### Data Preprocessing
-A **Jupyter Notebook (`cosmos.ipynb`)** was created to handle:
+### What the Preprocessing Did
+We used a **Jupyter Notebook (`cosmos.ipynb`)** to:
 
-- Reading and cleaning the Spotify data.
-- Transforming each song’s metadata into a **text description** to capture meaningful context (track name, artist, release date, and attributes like danceability and energy).
-- Converting these text descriptions into **vector embeddings** using **Azure OpenAI’s `text-embedding-ada-002`** model.
-- Preparing each document with both:
-    - The **embedding vector** (for semantic search).
-    - **Metadata** (track name, artist name, year, etc.) to support filtering and display.
+1. Read the CSV file and clean up the data.
+2. Combine all useful info about each song into a **text summary** (like “This is a happy dance song by Drake from 2022”).
+3. Convert those summaries into **vectors (embeddings)** using **Azure OpenAI’s embedding model**.
+4. Store the vectors along with song metadata in **CosmosDB**, which supports **vector search**.
 
 ---
 
 ### Storage
-The preprocessed song data (embeddings + metadata) was stored in **Azure CosmosDB** using its **native vector search capability**. CosmosDB was configured to support **vector similarity search** (cosine distance) on the embeddings, enabling semantic music retrieval.
+All the preprocessed song data — including the embeddings and song details — was saved to **Azure CosmosDB**. CosmosDB was set up to do **vector similarity search** so it could find songs that were closest in meaning to the search query.
 
 ---
 
-## 🌐 System Architecture
-- The **frontend (Angular)** provided the user interface, allowing users to enter natural language queries such as "upbeat pop songs from 2023".
-- The **backend (Node.js)** served as the main API gateway, handling incoming requests from the frontend.
-- The **data processing backend (Flask)** was responsible for:
-    - Query pre-processing (cleaning and enriching the query).
-    - Converting user queries into **embedding vectors** using **Azure OpenAI**.
-    - Executing **vector similarity search** against **CosmosDB**.
-    - Returning the matched songs with their metadata to the frontend.
+## 🌐 How the Whole System Worked
+- The **frontend (Angular)** gave users a search bar where they could type something like "relaxing indie songs from 2019."
+- The **main backend (Node.js)** received the search and forwarded it to a smaller **Flask service**.
+- The Flask service took the query, cleaned it up, and turned it into a vector using the same OpenAI embedding model.
+- That vector was passed to **CosmosDB**, which ran the actual vector search.
+- CosmosDB returned the closest matching songs, and the backend sent them back to the frontend to display.
 
 ---
 
-## 📊 Notebook (`cosmos.ipynb`)
-Since this project was developed as part of a **company project**, the majority of the production code (Angular frontend, Node.js gateway, and Flask processing service) **cannot be shared publicly**.
+## 📊 About the Notebook (`cosmos.ipynb`)
+Because this was part of a **company project**, I can’t share the actual **Angular frontend, Node backend, or Flask code**.
 
-However, the **data preprocessing notebook (`cosmos.ipynb`)** is provided to demonstrate:
+However, the **notebook (`cosmos.ipynb`)** is included to show:
 
-- Data cleaning.
-- Embedding generation using Azure OpenAI.
-- Vector document construction.
-- Bulk upload to CosmosDB.
+- How the data got cleaned up.
+- How the embeddings were generated using Azure OpenAI.
+- How the song data (vectors + metadata) got uploaded into CosmosDB.
 
-This notebook serves as a standalone demonstration of the **data preparation process**.
-
----
-
-## 🚀 Why Vector Search?
-Traditional keyword search (like `track_name LIKE '%love%'`) is **limited** to exact matches. By converting each song into a **semantic embedding vector**, the system could:
-- Understand that "happy dance music" relates to **high danceability and positive valence tracks**.
-- Retrieve songs that match the **intent** behind the query, not just the literal words.
+At the bottom of the notebook, there’s also an **example query** showing CosmosDB returning songs based on a sample search. This helps demonstrate that the system works — you can see how the search vector pulls back relevant songs based on meaning, not just exact words.
 
 ---
 
-## 🔒 Company Disclaimer
-This project was part of proprietary development for a corporate client, and only the **preprocessing notebook** is visible in this repository. The **full project (frontend, API gateway, and Flask processing backend)** remains private due to **property restrictions**.
+## 🚀 Why Use Vector Search?
+Normal search (like `track_name LIKE '%love%'`) only works if the exact words match. By using vectors, the system could find songs that **feel similar** to the search query — even if none of the exact words were in the song name. For example, a search for "chill beach music" could still find a song called "Ocean Vibes" — even though "chill" and "beach" aren’t in the title.
 
+---
+
+## 🔒 Important Note
+This project was made for a company, so only the preprocessing notebook is included here. Everything else (the actual app code) is kept private.

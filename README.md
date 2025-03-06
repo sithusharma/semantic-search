@@ -1,4 +1,8 @@
-# 🎵 Music Search Platform
+
+
+# 🎵 Music Search Platform 
+
+The code in this repository is a demo of what the front and back end would look like with third party services (Streamlit, Render, PineconeDB)
 
 This project was built as part of a company project to make a **smart music search tool**. The goal was to let users type in a natural language search like "upbeat pop songs from 2023" and get **relevant songs** — even if the song titles didn’t exactly match the words they typed.
 
